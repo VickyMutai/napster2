@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css">
+    <title>Napster Trial</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.4.2/handlebars.js"></script>
+    <script src="napster.js/napster.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+    </div>
+    <div class="back-button"><a>Back to playlists</a></div>
+    <div id="playlist-container"></div>
+    <div id="tracks-container"></div>
+  </div>
+  
+  <script id="tracks-template" type="text/x-handlebars-template">
+    {{#each tracks}}
+    <div data-track-id="{{id}}" style="background-image:url(http://direct.rhapsody.com/imageserver/v2/albums/{{albumId}}/images/300x300.jpg)" class="cover">
+    <div class=content-name>{{name}}</div>
+    <audio controls class= "audio">
+      <source src="{{previewURL}}" type="audio/mpeg">
+    </audio>
+    </div>
+    {{/each}}
+  </script>
+      <script src="index.js"></script>
+</body>
+</html>

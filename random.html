@@ -1,0 +1,74 @@
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.4.2/handlebars.js"></script>
+
+<script id="playlist-template" type="text/x-handlebars-template">
+    {{#each playlists}}
+    <div style="background-image:url({{images.0.url}})" data-playlist-id="{{id}}" data-playlist-name="{{name}}" class="cover">
+    <div class="content-name">{{name}}</div></div>
+    {{/each}}
+  </script>
+  
+  <script id="tracks-template" type="text/x-handlebars-template">
+    {{#each tracks}}
+    <div data-track-id="{{id}}" style="background-image:url(http://direct.rhapsody.com/imageserver/v2/albums/{{albumId}}/images/300x300.jpg)" class="cover">
+    <div class=content-name>{{name}}</div>
+    <audio controls class= "audio">
+      <source src="{{previewURL}}" type="audio/mpeg">
+    </audio>
+    </div>
+    {{/each}}
+  </script>
+  <script>
+  const playlistTemplateSource = document.getElementById('playlist-template').innerHTML;
+const playlistTemplate = Handlebars.compile(playlistTemplateSource);
+
+const tracksTemplateSource = document.getElementById('tracks-template').innerHTML;
+const tracksTemplate = Handlebars.compile(tracksTemplateSource);
+
+const $playlist = $('#playlist-container');
+const $tracks = $('#tracks-container');
+const $mainTitle = $('.header');
+const $backButton = $('.back-button');
+
+const getTopPlaylists = $.get('https://api.napster.com/v2.0/playlists?apikey=ZTk2YjY4MjMtMDAzYy00MTg4LWE2MjYtZDIzNjJmMmM0YTdm');
+
+function getPlaylistTracks(id) {
+  return $.get('https://api.napster.com/v2.0/playlists/' + id + '/tracks?apikey=ZTk2YjY4MjMtMDAzYy00MTg4LWE2MjYtZDIzNjJmMmM0YTdm&limit=200');
+}
+
+$backButton.click(() => {
+	$playlist.show();
+  $tracks.hide();
+  $mainTitle.text('Top Playlists');
+  $backButton.hide();
+});
+
+$backButton.hide(); // Initally hide back button.
+
+function changeToTracks(playlistName) {
+	$mainTitle.text(playlistName);
+  $playlist.hide();
+	$tracks.show();
+  $backButton.show();
+  
+  return renderTracks;
+}
+
+function renderTracks(response) {
+  $tracks.html(tracksTemplate(response));
+}
+
+getTopPlaylists
+  .then((response) => {
+    $playlist.html(playlistTemplate(response));
+    addPlaylistListener();
+  });
+
+function addPlaylistListener() {
+  $('.cover').on('click', (e) => {
+    const $playlist = $(e.target);
+    getPlaylistTracks($playlist.data('playlistId'))
+      .then(changeToTracks($playlist.data('playlistName')));
+  });
+}</script>
+
